@@ -55,8 +55,21 @@ socket.on('connect', function(){
 
 });
 
+function waitForElementToDisplay(selector, time) {
+  if(document.querySelector(selector)!=null) {
+    alert("The element is displayed, you can put your code instead of this alert.")
+    return;
+  }
+  else {
+    setTimeout(function() {
+      waitForElementToDisplay(selector, time);
+    }, time);
+  }
+}
+
 
 function takeScreenshot(options, success, error){
+  console.log('Starting screenshot with options' + options)
 
   if ( (options.format !== 'png' && options.format !== 'jpeg') || !options.format) {
     options.format = 'png';
@@ -80,6 +93,9 @@ function takeScreenshot(options, success, error){
   win.on('loaded', function(){
     if (options.forceTransparency){
       win.eval(null, "document.body.style.background='transparent';");
+    }
+    if (options.selector){
+      waitForElementToDisplay(options.selector, options.awaitTimeout || 10000)
     }
     setTimeout(function(){
       win.capturePage(function(buffer) {
